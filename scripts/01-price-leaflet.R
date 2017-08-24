@@ -31,7 +31,7 @@ df_rent[, ID := sprintf("%s,%s", tolower(State_Name),
                         tolower(stringr::str_trim(stringr::str_replace(County, "County", ""))))]
 
 # join rent and geometry data ---------------------------------------------
-sf_geom = dplyr::left_join(sf_geom, df_rent, by = "ID")
+sf_geom = sf::st_as_sf(dplyr::left_join(sf_geom, df_rent, by = "ID"))
 
 # build color palette for leaflet map -------------------------------------
 f_pale = colorQuantile("RdYlBu", domain = sf_geom$w_median, 
@@ -40,7 +40,7 @@ f_pale = colorQuantile("RdYlBu", domain = sf_geom$w_median,
 # build labels ------------------------------------------------------------
 v_labs = sprintf(stringr::str_c("<strong>County:</strong> %s<br>",
                                 "<strong>State:</strong> %s<br>",
-                                "<strong>Median rent:</strong> $%s",
+                                "<strong>Weighted median rent:</strong> $%s",
                                 collapse = ""),
                  sf_geom$County, sf_geom$State_Name, 
                  formatC(sf_geom$w_median, format = "f", digits = 0, big.mark = ","))
@@ -72,7 +72,8 @@ m = addPolygons(m,
 m = addLegend(m, 
               position = "bottomright",
               pal = f_pale,
-              values = sf_geom$w_median, title = "Price percentile")
+              values = sf_geom$w_median, 
+              title = "Rent percentile")
 
 # save to file ------------------------------------------------------------
 htmlwidgets::saveWidget(m, "../output/leaflet.html")
