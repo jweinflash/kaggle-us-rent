@@ -24,7 +24,7 @@ sf_geom = sf::st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
 # calculate weighted median rent per county, and build ID field -----------
 df_rent = as.data.table(df_rent)
 
-df_rent = df_rent[, .(w_median = sum((Samples/sum(Samples))*Median)), 
+df_rent = df_rent[Samples != 0, .(w_median = (1/sum(Samples))*sum(Samples*Median)), 
                   by = c("County", "State_Name")]
 
 df_rent[, ID := sprintf("%s,%s", tolower(State_Name), 
