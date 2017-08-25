@@ -67,7 +67,7 @@ l_lb_options = labelOptions(style = list("font-weight" = "normal"),
                             textsize = "12px")
 
 # build map ---------------------------------------------------------------
-m = leaflet(sp_rent)
+m = leaflet(sp_rent, width = "100%")
 m = addTiles(m)
 
 m = addPolygons(m,
